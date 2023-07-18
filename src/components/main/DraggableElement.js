@@ -137,15 +137,15 @@ function DraggableElement({
 
 
 
-  const [text1, setText] = useState('');
+  const [text1, setText] = useState('Input');
   const [buttonClicked, setButtonClicked] = useState(false);
 
 
 
 
   const handleNameChange = (event) => {
-    setText(event.target.value);
-    
+    // setText(event.target.value);
+    setInputValueSave(event.target.value);
   };
 
 
@@ -202,8 +202,8 @@ function DraggableElement({
     setIsHovered(false);
     setDisplayText(editorText);
     setTextValueDefault(textValueDefault);
-    // setText(inputValue);
-    setInputValueSave(text1 || "Input");
+    // setText(inputValueSave);
+    // setInputValueSave(text1 || "Input");
     // setTextAreaValueSave(inputValueFromTextArea || "Text Area" );
     onSave(inputValue1, inputValue2);
    console.log(text1);
@@ -711,7 +711,7 @@ function DraggableElement({
                       fontSize:"18px"
                     }}name="name">Name*</label>
                     <input 
-                    value={text1}
+                    value={inputValueSave}
 
                     style={{
                       height:"25px",
@@ -836,6 +836,7 @@ function DraggableElement({
                       field={field}
                       handleField={handleField}
                       setTextAreaValueSave={setTextAreaValueSave}
+                      editorText={editorText}
                       >
                       </TextArea>
                     )

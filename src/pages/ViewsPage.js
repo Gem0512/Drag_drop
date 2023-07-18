@@ -66,6 +66,19 @@ const columns = [
     p: 4,
   };
 
+
+  const style1 = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
+
 export default function ViewsPage({
   inputValueView,
   droppedItems,
@@ -96,6 +109,11 @@ export default function ViewsPage({
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+
+  const [open1, setOpen1] = React.useState(false);
+  const handleOpen1 = () => setOpen1(true);
+  const handleClose1 = () => setOpen1(false);
+
   const getTypeById = (id) => {
     const element = ElementList.find((item) => item.id === id);
     return element ? element.type : "";
@@ -119,8 +137,8 @@ export default function ViewsPage({
   }
 
   const [rows, setRows] = useState([
-    // { id: 1, name: 'Snow' },
-    // { id: 2, name: 'Lannister' },
+    { id: 1, name: 'Snow' },
+    { id: 2, name: 'Lannister' },
   ]);
 
   const [sizeText, setSizeText]= useState('');
@@ -136,9 +154,9 @@ export default function ViewsPage({
       name: input1,
       text: textarea,
       label: label,
-      valueSample1:sample1,
+      // valueSample1:sample1,
       value: checkBox1,
-      valueSample2:sample2,
+      // valueSample2:sample2,
       value2:inputValues2
     };
 
@@ -174,10 +192,16 @@ export default function ViewsPage({
     console.log(sample1, sample2);
   };
 
+
+
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('rows')) || [];
+
+    // Lấy dữ liệu từ localStorage
+    const storedData = JSON.parse(localStorage.getItem('rows'));
     setRows(storedData);
   }, []);
+
+  
 
 
   const [label, setLabel]= useState("");
@@ -222,8 +246,8 @@ export default function ViewsPage({
     const newRow = {
       id: rows.length +1,
       email: row.email,
-      name:  row.input1,
-      text:  row.textarea,
+      name:  row.name,
+      text:  row.text,
       label:  row.label,
       value:  row.inputValueView,
     };
@@ -233,7 +257,7 @@ export default function ViewsPage({
     localStorage.setItem('rows', JSON.stringify(updatedRows));
     setRows(updatedRows);
     }
-    console.log( row.id, row.email, row.input1, row.label,row.textarea);
+    console.log("--------------", row.name, );
   
   };
 
@@ -289,10 +313,194 @@ export default function ViewsPage({
   }, []);
 
 
+
+  const [editingRow, setEditingRow] = useState(null);
+  const [modalData, setModalData] = useState({ id: '', name: '', age: '' });
+
+  const handleEditClick = (row) => {
+    setModalData({ ...row });
+    setEditingRow(row.id);
+    handleOpen1(true);
+    };
+
+  const handleModalInputChange = (event) => {
+    const { name, value } = event.target;
+    setModalData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+
+  // const handleModalTextChange = (event) => {
+  //   const { text, value } = event.target;
+  //   setModalData((prevData) => ({
+  //     ...prevData,
+  //     [text]: value,
+  //   }));
+  // };
+
+  // const handleModalLabelChange = (event) => {
+  //   const { label, value } = event.target;
+  //   setModalData((prevData) => ({
+  //     ...prevData,
+  //     [label]: value,
+  //   }));
+  // };
+
+  const handleSave = () => {
+    setRows((prevData) =>
+      prevData.map((row) => (row.id === editingRow ? { ...modalData } : row))
+    );
+
+    const objectIndex = rows.findIndex(obj => obj.id === editingRow);
+    if (objectIndex !== -1) {
+      rows[objectIndex] = modalData;
+      localStorage.setItem('rows', JSON.stringify(rows));
+    setRows(rows);
+
+    }
+
+
+    
+ 
+    
+
+    setEditingRow(null);
+    console.log(modalData);
+    handleClose1(true);
+    console.log(rows);
+  };
+
+  
+  // const row = rows.find(row => row.id === id);
+  // if (row) {
+  // const newRow = {
+  //   id: rows.length +1,
+  //   email: row.email,
+  //   name:  row.name,
+  //   text:  row.text,
+  //   label:  row.label,
+  //   value:  row.inputValueView,
+  // };
+
+  // const updatedRows = [...rows, newRow];
+ 
+  // localStorage.setItem('rows', JSON.stringify(updatedRows));
+  // setRows(updatedRows);
+  // }
+  // console.log("--------------", row.name, );
+
+
   return (
 
     <div style={{ height: "auto", width: '100%',
     paddingBottom:"20px" }}>
+
+<Modal
+        open={open1}
+        onClose={handleClose1}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div>
+          <h2
+          style={{
+            marginBottom:"20px"
+          }}>Form submit</h2>
+          <hr></hr>
+          <div
+          style={{
+            margin:"20px 10px ",
+          }}
+          >
+            <label
+            style={{
+            fontWeight:"bold",
+            marginLeft:"-10px",
+            display:"block"
+          }}>User</label>
+            <input 
+            style={{
+              width:"300px",
+              padding: "10px"
+            }}value={email} disable></input>
+          </div>
+          <div>
+          {
+            modalData.id && (
+            <div>
+              <label>ID:</label>
+              <input
+                type="text"
+                name="id"
+                value={modalData.id}
+                onChange={handleModalInputChange}
+                disabled
+              />
+            </div>
+            )
+          }
+          {
+            modalData.name &&(
+              <div>
+                <label>{inputValueSave}</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={modalData.name}
+                  onChange={handleModalInputChange}
+                />
+              </div>
+            )
+          }
+          {
+            modalData.text &&(
+              <div>
+                <label>{textAreaValueSave}</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={modalData.text}
+                  onChange={handleModalInputChange}
+                />
+              </div>
+            )
+          }
+          {
+            modalData.label &&(
+              <div>
+                <label>{textAreaValueSave}</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={modalData.label}
+                  onChange={handleModalInputChange}
+                />
+              </div>
+            )
+          }
+          
+          
+        
+          </div>
+        <div
+        style={{
+          display:"flex",
+          justifyContent:"flex-end"
+        }}>
+          <Button
+          sx={{
+            backgroundColor:"orange",
+            padding:"10px 20px",
+          }}
+          onClick={handleSave}
+          >Submit</Button>
+        </div>
+          </div>
+        </Box>
+      </Modal>
       <div
       style={{
         display:"flex",
@@ -500,7 +708,7 @@ export default function ViewsPage({
                 <td 
                 style={{
                 padding:"5px 20px",
-               
+                // width:"90%",
               }}
                 key={index}>{value}</td>
                 
@@ -511,29 +719,31 @@ export default function ViewsPage({
              style={{
               display:"flex",
               justifyContent:'flex-end',
-              width:"20%",
+              width:"25%",
               paddingTop:"5px"
              }}>
              <div
              className="actionHover"
-             onClick={handleOpen}
+             onClick={() =>  handleEditClick(row)}
              style={{
-              paddingRight:"20px",
+              paddingRight:"10px",
             
              }}>
-              
+
                 <CreateIcon style={{ marginRight: 8, marginBottom: -5, color:"#0099CC"}} />
                 <span style={{
                   color:"#0099CC"
                 }}>Edit</span>
               
               </div>
+
+
               
               <div
                 className="actionHover"
               onClick={() => handleDuplicateRow(row.id)}
                style={{
-              paddingRight:"20px"
+              paddingRight:"10px"
               
              }}>
                 <ContentCopyIcon style={{ marginRight: 8, marginBottom: -5, color:"#0099CC"}} />
@@ -545,7 +755,7 @@ export default function ViewsPage({
               <div
                 className="actionHover"
                style={{
-              paddingRight:"20px"
+              paddingRight:"10px"
              }}
              onClick={() => handleDeleteRow(row.id)}>
               

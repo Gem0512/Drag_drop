@@ -23,7 +23,7 @@ const columns = [
       ),},
     { field: 'edit', 
     headerName: 'a', 
-    width: "100" ,
+    width: "80" ,
     renderCell: (params) => (
       <div>
         <CreateIcon style={{ marginRight: 8, marginBottom: -5, color:"#0099CC"}} />
@@ -35,7 +35,7 @@ const columns = [
   },
   { field: 'delete', 
   headerName: 'b', 
-  width: "100",
+  width: "80",
   renderCell: (params) => (
     <div>
       <HighlightOffIcon style={{ marginRight: 8, marginBottom: -5, color:"red"}} />
@@ -65,6 +65,9 @@ export default function CreatedList() {
   return (
     <div style={{ height: 600, width: '100%' }}>
       <DataGrid
+        sx={{
+          width:"80%"
+        }}
         rows={rows}
         columns={columns}
         initialState={{

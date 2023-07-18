@@ -431,7 +431,7 @@ export default function Home(
 
 
       // Value title
-      const [inputValueSave, setInputValueSave] = useState('');
+      const [inputValueSave, setInputValueSave] = useState('Input');
       const [textAreaValueSave, setTextAreaValueSave] = useState('');
     
    
