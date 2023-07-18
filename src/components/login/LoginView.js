@@ -16,13 +16,16 @@ const LoginView = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (email && password) {
+    if (email==="ngocnguyenthithanh6@gmail.com" && password==="1234") {
       // Lưu email và mật khẩu vào local storage
       localStorage.setItem('email', email);
       localStorage.setItem('password', password);
 
       // Chuyển đến trang mới
       window.location.href = '/home';
+    }
+    else{
+      window.location.href = '/test';
     }
   };
 

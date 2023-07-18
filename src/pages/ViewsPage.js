@@ -136,10 +136,7 @@ export default function ViewsPage({
     setTextarea(value)
   }
 
-  const [rows, setRows] = useState([
-    { id: 1, name: 'Snow' },
-    { id: 2, name: 'Lannister' },
-  ]);
+  const [rows, setRows] = useState([]);
 
   const [sizeText, setSizeText]= useState('');
 
@@ -240,11 +237,16 @@ export default function ViewsPage({
 
   // Duplication object
   const handleDuplicateRow = (id) => {
+
+    const maxId = rows.reduce((max, current) => (
+      current.id > max ? current.id : max
+        ), rows[0].id
+      );
   
     const row = rows.find(row => row.id === id);
     if (row) {
     const newRow = {
-      id: rows.length +1,
+      id: maxId +1,
       email: row.email,
       name:  row.name,
       text:  row.text,
@@ -257,7 +259,7 @@ export default function ViewsPage({
     localStorage.setItem('rows', JSON.stringify(updatedRows));
     setRows(updatedRows);
     }
-    console.log("--------------", row.name, );
+    console.log("--------------", rows.length +1, row.id, maxId );
   
   };
 
@@ -274,19 +276,6 @@ export default function ViewsPage({
     }
   }, []);
 
-
-  // Size Input
-  // const handleInput3Change = (event) => {
-  //   const value = event.target.value;
-  //   if (value.length >= parseInt(inputValue1) && value.length <=parseInt(inputValue2)  ) {
-      
-  //     setError('');
-  //   } else {
-     
-  //     alert("loi");
-  //   }
-  //   setSizeText(value);
-  // };
 
   const [checkValue, setCheckValue]= useState('');
 
@@ -315,12 +304,30 @@ export default function ViewsPage({
 
 
   const [editingRow, setEditingRow] = useState(null);
-  const [modalData, setModalData] = useState({ id: '', name: '', age: '' });
+  const [modalData, setModalData] = useState({ id: '', name: '', text: '', label:'' });
+
+
+  const [nameState, setNameState]= useState(false);
+  const [textState, setTextState]= useState(false);
+  const [labelState, setLabelState]= useState(false);
+
+
+
 
   const handleEditClick = (row) => {
     setModalData({ ...row });
     setEditingRow(row.id);
     handleOpen1(true);
+    if(modalData.name){
+      setNameState(true);
+    }
+    if(modalData.text){
+      setTextState(true);
+    }
+    if(modalData.label){
+      setLabelState(true);
+    }
+    // console.log(nameState, "---", modalData.name);
     };
 
   const handleModalInputChange = (event) => {
@@ -329,24 +336,26 @@ export default function ViewsPage({
       ...prevData,
       [name]: value,
     }));
+    // console.log(event.target, "/", name,"/", value);
+  };
+
+  const handleModalInputChange1 = (event) => {
+    const { name, value } = event.target;
+    setModalData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleModalInputChange2 = (event) => {
+    const { name, value } = event.target;
+    setModalData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
 
-  // const handleModalTextChange = (event) => {
-  //   const { text, value } = event.target;
-  //   setModalData((prevData) => ({
-  //     ...prevData,
-  //     [text]: value,
-  //   }));
-  // };
-
-  // const handleModalLabelChange = (event) => {
-  //   const { label, value } = event.target;
-  //   setModalData((prevData) => ({
-  //     ...prevData,
-  //     [label]: value,
-  //   }));
-  // };
 
   const handleSave = () => {
     setRows((prevData) =>
@@ -361,35 +370,12 @@ export default function ViewsPage({
 
     }
 
-
-    
- 
-    
-
     setEditingRow(null);
     console.log(modalData);
     handleClose1(true);
     console.log(rows);
   };
 
-  
-  // const row = rows.find(row => row.id === id);
-  // if (row) {
-  // const newRow = {
-  //   id: rows.length +1,
-  //   email: row.email,
-  //   name:  row.name,
-  //   text:  row.text,
-  //   label:  row.label,
-  //   value:  row.inputValueView,
-  // };
-
-  // const updatedRows = [...rows, newRow];
- 
-  // localStorage.setItem('rows', JSON.stringify(updatedRows));
-  // setRows(updatedRows);
-  // }
-  // console.log("--------------", row.name, );
 
 
   return (
@@ -408,7 +394,7 @@ export default function ViewsPage({
           <h2
           style={{
             marginBottom:"20px"
-          }}>Form submit</h2>
+          }}>Form Edit</h2>
           <hr></hr>
           <div
           style={{
@@ -433,6 +419,11 @@ export default function ViewsPage({
             <div>
               <label>ID:</label>
               <input
+                style={{
+                    margin:"20px 0px 0px 0",
+                    padding:"5px",
+                    width:"40%"
+                  }}
                 type="text"
                 name="id"
                 value={modalData.id}
@@ -443,10 +434,15 @@ export default function ViewsPage({
             )
           }
           {
-            modalData.name &&(
+            nameState &&(
               <div>
-                <label>{inputValueSave}</label>
+                {/* <label>{inputValueSave}</label> */}
                 <input
+                  style={{
+                    margin:"20px 0px 0px 0",
+                    padding:"5px",
+                    width:"40%"
+                  }}
                   type="text"
                   name="name"
                   value={modalData.name}
@@ -456,27 +452,37 @@ export default function ViewsPage({
             )
           }
           {
-            modalData.text &&(
+            textState &&(
               <div>
-                <label>{textAreaValueSave}</label>
+                {/* <label>{textAreaValueSave}</label> */}
                 <input
+                style={{
+                  margin:"20px 0px",
+                  padding:"5px",
+                  width:"40%"
+                }}
                   type="text"
-                  name="name"
+                  name="text"
                   value={modalData.text}
-                  onChange={handleModalInputChange}
+                  onChange={handleModalInputChange1}
                 />
               </div>
             )
           }
           {
-            modalData.label &&(
+            labelState &&(
               <div>
-                <label>{textAreaValueSave}</label>
+                {/* <label>{textAreaValueSave}</label> */}
                 <input
+                style={{
+                    margin:"0px 0px 20px 0",
+                    padding:"5px",
+                    width:"40%"
+                  }}
                   type="text"
-                  name="name"
+                  name="label"
                   value={modalData.label}
-                  onChange={handleModalInputChange}
+                  onChange={handleModalInputChange2}
                 />
               </div>
             )
